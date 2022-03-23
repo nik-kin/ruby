@@ -1,0 +1,50 @@
+require 'rubygems'
+require 'SVM'
+include SVM
+
+puts "Spam filtering test with LIBSVM"
+
+
+# ... insert svm-documents.rb code
+
+# Define kernel parameters -- we'll stick with the defaults
+pa = Parameter.new
+pa.C = 100
+pa.svm_type = NU_SVC
+pa.degree = 1
+pa.coef0 = 0
+pa.eps= 0.001
+
+sp = Problem.new
+
+# Add documents to the training set
+labels.each_index { |i| sp.addExample(labels[i], feature_vectors[i]) }
+
+
+kernels = [ LINEAR, POLY, RBF, SIGMOID ]
+kernel_names = [ 'Linear', 'Polynomial', 'Radial basis function', 'Sigmoid' ]
+
+kernels.each_index { |j|
+  # Iterate and over each kernel type
+  pa.kernel_type = kernels[j]
+  m = Model.new(sp, pa)
+  errors = 0
+
+  # Test kernel performance on the training set
+  labels.each_index { |i|
+    pred, probs = m.predict_probability(feature_vectors[i])
+    puts "Prediction: #{pred}, True label: #{labels[i]}, Kernel: #{kernel_names[j]}"
+    errors += 1 if labels[i] != pred
+  }
+  puts "Kernel #{kernel_names[j]} made #{errors} errors on the training set"
+
+  # Test kernel performance on the test set
+  errors = 0
+  test_labels.each_index { |i|
+    pred, probs = m.predict_probability(test_vectors[i])
+    puts "\t Prediction: #{pred}, True label: #{test_labels[i]}"
+    errors += 1 if test_labels[i] != pred
+  }
+
+  puts "Kernel #{kernel_names[j]} made #{errors} errors on the test set \n\n"
+}
