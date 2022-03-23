@@ -1,0 +1,25 @@
+require 'rubygems'
+require 'decisiontree'
+
+
+labels = ["marks"]
+training = [
+    [1250, "You have a terrible SAT score"],
+    [1580, "Your SAT score is poor"],
+    [1670, "Your SAT score is fair"],
+    [1740, "You have a good SAT score"],
+    [1800, "You have a very good SAT score!"],
+    [1900, "Wonderful! your SAT score is great!"],
+]
+
+dec_tree = DecisionTree::ID3Tree.new(labels, training, "You have a terrible SAT score",  :continuous)
+dec_tree.train
+
+
+test_data = [1450, 1210, 865, 1240, 1456, 1333, 1000, 1435, 1555, 1600]
+
+test_data.each do |i|
+  test = [i]
+  decision = dec_tree.predict(test)
+  puts "Predicted: #{decision} ... True decision: #{test.last}"
+end
