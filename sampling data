@@ -1,0 +1,40 @@
+# Sample training set ...
+
+ 
+  #    1 = Spam, 0 = Not-Spam
+  labels = [1, 1, 0, 1, 1, 0, 0]
+
+  documents = [
+    %w[Patna NATIONAL martm],      # F
+    %w[FREE ticker for EVERY one],   # F
+    %w[river Ganga and Punpun], # T
+    %w[AS SEEN ON NATIONAL TV],      # F
+    %w[FREE food],          # SPAM
+    %w[eco park and garden], #T
+    %w[zoo]        # T
+    # ...
+  ]
+
+# Test set ...
+# ----------------------------------------------------------
+  test_labels = [1, 0, 0]
+
+  test_documents = [
+    %w[Patna NATIONAL martmhf !], # Spam
+    %w[river ganga],     # OK
+    %w[eco park],    # OK
+    # ...
+  ]
+
+# Build a global dictionary of all possible words
+dictionary = (documents+test_documents).flatten.uniq
+puts "Global dictionary: \n #{dictionary.inspect}\n\n"
+
+# Build binary feature vectors for each document
+#  - If a word is present in document, it is marked as '1', otherwise '0'
+#  - Each word has a unique ID as defined by 'dictionary'
+feature_vectors = documents.map { |doc| dictionary.map{|x| doc.include?(x) ? 1 : 0} }
+test_vectors = test_documents.map { |doc| dictionary.map{|x| doc.include?(x) ? 1 : 0} }
+
+puts "First training vector: #{feature_vectors.first.inspect}\n"
+puts "First test vector: #{test_vectors.first.inspect}\n"
